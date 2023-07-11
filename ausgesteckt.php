@@ -22,6 +22,7 @@ $apiS = file_get_contents('https://www.pdorf.at/Cal-neu/abfrage.php?Date='.$date
 $apiS = substr($apiS, 0, strpos($apiS, "</menu>"));
 
 //remove not important code
+$apiS = html_entity_decode($apiS);
 $apiS = strstr($apiS, '<menu>');
 $apiS = substr($apiS, 6);
 $apiS = str_replace("<li>", "", $apiS);
@@ -41,6 +42,7 @@ foreach ($heurigerArray as $heuriger) {
     $tmp_phone; #
     $tmp_playground;
     $tmp_wheelchair;
+    $tmp_nameId;
 
     $tmp_heuriger = explode(",", $heuriger);
 
@@ -52,13 +54,27 @@ foreach ($heurigerArray as $heuriger) {
     $tmp_playground = search_in_array_boolean($tmp_heuriger, 'splplz.gif');
     $tmp_wheelchair = search_in_array_boolean($tmp_heuriger, 'rolli.gif');
 
+    $tmp_nameId = strtolower($tmp_name);
+    $tmp_nameId = str_replace(' ', '-', $tmp_nameId);
+    $tmp_nameId = str_replace("&", "-a-", $tmp_nameId);
+    $tmp_nameId = str_replace('"', "", $tmp_nameId);
+    $tmp_nameId = str_replace(".", "", $tmp_nameId);
+    $tmp_nameId = str_replace("ö", "oe", $tmp_nameId);
+    $tmp_nameId = str_replace("ä", "ae", $tmp_nameId);
+    $tmp_nameId = str_replace("ü", "ue", $tmp_nameId);
+    $tmp_nameId = str_replace("ß", "ss", $tmp_nameId);
+    $tmp_nameId = str_replace("Ö", "oe", $tmp_nameId);
+    $tmp_nameId = str_replace("Ä", "ae", $tmp_nameId);
+    $tmp_nameId = str_replace("Ü", "ue", $tmp_nameId);
+
     array_push($heurigerApi, array(
         "name" => $tmp_name,
+        "nameId" => $tmp_nameId,
         "link" => $tmp_link,
         "phone" => $tmp_phone,
         "address" => $tmp_address,
         "has_playground" => $tmp_playground,
-        "wheelchair_accessible" => $tmp_wheelchair
+        "wheelchair_accessible" => $tmp_wheelchair,
     ));
 
 }
